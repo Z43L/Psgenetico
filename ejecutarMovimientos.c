@@ -1,6 +1,6 @@
 #include "psgenetico.h"
 
-void ejecutarMovimientos(char ***poblacion, pushswap ps)
+void ejecutarMovimientos(char **poblacion, pushswap ps)
 {
     int i = 0;
 	while(poblacion[i])

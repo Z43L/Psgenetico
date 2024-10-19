@@ -30,7 +30,7 @@ char **generarPoblacionInicial(int semilla)
     return poblacion;
 }
 
-char ***generarPoblacionDelMejor(int semilla , int posicionMejorInicial, int i)
+char **generarPoblacionDelMejor(int semilla , int posicionMejorInicial, int i)
 {
     char ***nuevaPoblacion;
 	while(i < poblacionInicial)
