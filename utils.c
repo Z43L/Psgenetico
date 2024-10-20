@@ -1,15 +1,16 @@
 #include "psgenetico.h"
 
-int intlen(int semilla)
+int intlen(int num)
 {
-    int newsemilla = semilla / 10;
-    int i = 0;
-	while(newsemilla >= '9')
+    int length = 0;
+    if (num == 0)
+        return 1;
+    while (num != 0)
     {
-        i++;
+        num /= 10;
+        length++;
     }
-    return newsemilla;;
-
+    return length;
 }
 int intlenmenos3(int mxMovimientos)
 {

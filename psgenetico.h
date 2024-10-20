@@ -23,18 +23,18 @@ void realizar_rra(int *stacka, int size_a);
 void realizar_rrb(int *stackb, int size_b);
 void realizar_pa(int *stacka, int size_a, int *stackb, int size_b);
 void realizar_pb(int *stacka, int size_a, int *stackb, int size_b);
-char ***generarPoblacionInicial(int semilla);
-char ***generarPoblacionDelMejor(int semilla , int posicionMejorInicial, int i);
+char **generarPoblacionInicial(int semilla);
+char **generarPoblacionDelMejor(int semilla , int posicionMejorInicial, int i);
 int intlenmenos3(int mxMovimientos);
 int intlen(int semilla);
-char *quienEsMejor(char **poblacion,pushswap ps,int i);
+char *quienEsMejor(char **poblacion,int i);
 int numerosDeMovimientosHechos(char *poblacion);
 void ejecutarMovimientos(char **poblacion, pushswap ps);
 int custom_rand(unsigned int *rand_seed);
 unsigned long long read_tsc(void);
-int hastaCuantoAsOrdenado(pushswap ps, char *poblacion, int i);
 int lenstack(pushswap ps);
 int issorted(pushswap ps);
-int hastaCuantoAsOrdenadoMejor(pushswap ps ,char *poblacion);
+int hastaCuantoAsOrdenado(pushswap ps, char **poblacion, int i);
+int hastaCuantoAsOrdenadoMejor(pushswap ps, char **poblacion);
 
 #endif
