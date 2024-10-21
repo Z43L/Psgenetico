@@ -1,7 +1,5 @@
 #include "psgenetico.h"
-#include <string.h>  // Include for strlen, strdup
-
-// Utility functions
+#include <string.h>  
 int is_number(const char *str)
 {
     int i = 0;
@@ -18,6 +16,17 @@ int is_number(const char *str)
     }
     return (1);
 }
+void imprimirMejorPoblacion(char **mejorpoblacion)
+{
+    int i = 0;
+    ft_printf("Mejor combinación de movimientos:\n");
+    while (mejorpoblacion[i])
+    {
+        ft_printf("%s\n", mejorpoblacion[i]); 
+        i++;
+    }
+}
+
 
 long ft_atol(const char *str)
 {
@@ -75,90 +84,76 @@ int initstack(char **av)
     return value;
 }
 
-// Define mutation function (example of swapping two random elements)
-void mutarIndividuo(char *individuo)
-{
-    int len = strlen(individuo);  // Get length of individual
-    if (len < 2)
-        return;  // If too short, no mutation possible
 
-    // Randomly swap two positions
-    int pos1 = rand() % len;
-    int pos2 = rand() % len;
-
-    char temp = individuo[pos1];
-    individuo[pos1] = individuo[pos2];
-    individuo[pos2] = temp;
-}
-
-// Generate the next generation from the best individual
-void generarSiguienteGeneracion(char **poblacion, char *mejorpoblacion, int poblacionSize)
-{
-    int i;
-
-    // Keep the best population unchanged in the next generation
-    poblacion[0] = mejorpoblacion;
-
-    // Mutate and generate the rest of the population
-    for (i = 1; i < poblacionSize; i++)
-    {
-        poblacion[i] = strdup(mejorpoblacion);  // Copy the best individual
-        mutarIndividuo(poblacion[i]);           // Apply mutation
-    }
-}
 
 int main(int ac, char **av)
 {
     if (ac < 2)
         return (0);
 
-    int i = 1, j, k = 0;
+    int i = 1;
+    int  j =0;
+    int k = 0;
     pushswap ps;
     unsigned int semilla = read_tsc();
-    char **poblacion;  // Adjusted to char ** to match function parameters
+    char **poblacion; 
     char *mejorpoblacion;
-	int stack_size= lenstack(ps);
-    // Initialize memory for ps.stacka
-    ps.stacka = malloc(sizeof(int) * stack_size);  // Replace stack_size with actual value
-    if (!ps.stacka)
+
+    ps.size_a = ac - 1;
+    ps.size_b = 0;
+
+    
+    ps.stacka = malloc(sizeof(int) * ps.size_a);
+    ps.stackb = malloc(sizeof(int) * ps.size_a); 
+    if (!ps.stacka || !ps.stackb)
     {
         ft_putstr_fd("Memory allocation error\n", 2);
         return (1);
     }
 
-    // Initialize stack
-    while (av[i])
+    for (i = 1; i < ac; i++)
     {
-        ps.stacka[i] = initstack(av);
-        i++;
+        ps.stacka[i - 1] = atoi(av[i]); 
     }
+    // Print the stack to check if the input is loaded correctly
+    ft_printf("Loaded stacka: ");
+    for (int i = 0; i < ps.size_a; i++) {
+        ft_printf("%d ", ps.stacka[i]); 
+    }
+    ft_printf("\n");
 
-    // Start genetic algorithm
+
     while (k < numeroDeGeneraciones)
     {
         while (i < poblacionInicial)
         {
             while (issorted(ps) != -1)
             {
-                int random = custom_rand(&semilla);  // Pass semilla as a pointer
-                poblacion = generarPoblacionInicial(random);  // Adjusted to match char ** type
-                j = 0;
+                int random = custom_rand(&semilla);
+                poblacion = generarPoblacionInicial(random);
                 while (poblacion[j])
                 {
-                    ejecutarMovimientos(poblacion, ps);  // Pass poblacion as char **
-                    mejorpoblacion = quienEsMejor(poblacion, j);  // Pass poblacion as char **
-                    generarSiguienteGeneracion(poblacion, mejorpoblacion, poblacionInicial);
-
+                    ejecutarMovimientos(poblacion[j], ps); 
+                    int numerodeMovimientosOrdenados = hastaCuantoAsOrdenado(ps, poblacion[j]);
+                    mejorpoblacion = poblacion[j];
+                    if(numerodeMovimientosOrdenados < hastaCuantoAsOrdenado(ps, poblacion[j -1]))
+                        mejorpoblacion =poblacion[j-1]; 
                     j++;
                 }
+                poblacion[0] = mejorpoblacion;
+                int posicioInicial = hastaCuantoAsOrdenado(ps, poblacion[0]);
+                generarPoblacionDelMejor(semilla,posicioInicial, 0 ,mejorpoblacion);
             }
             i++;
+            imprimirMejorPoblacion(poblacion);
+
         }
         k++;
     }
 
     // Free allocated memory
     free(ps.stacka);
+    free(ps.stackb);
 
     return 0;
 }

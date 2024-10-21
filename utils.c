@@ -14,9 +14,12 @@ int intlen(int num)
 }
 int intlenmenos3(int mxMovimientos)
 {
-    int i = 0;
+    // Reduce mxMovimientos by dividing by 1000
     int newMaxMovimientos = mxMovimientos / 1000;
-	while(newMaxMovimientos > 100)
-		i++;
+
+    // Ensure the value does not drop below zero
+    if (newMaxMovimientos < 0)
+        return 0;
+
     return newMaxMovimientos;
 }

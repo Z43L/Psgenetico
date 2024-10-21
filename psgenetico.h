@@ -24,17 +24,17 @@ void realizar_rrb(int *stackb, int size_b);
 void realizar_pa(int *stacka, int size_a, int *stackb, int size_b);
 void realizar_pb(int *stacka, int size_a, int *stackb, int size_b);
 char **generarPoblacionInicial(int semilla);
-char **generarPoblacionDelMejor(int semilla , int posicionMejorInicial, int i);
+char **generarPoblacionDelMejor(int semilla , int posicionMejorInicial, int i,char *mejorpoblante);
 int intlenmenos3(int mxMovimientos);
 int intlen(int semilla);
 char *quienEsMejor(char **poblacion,int i);
 int numerosDeMovimientosHechos(char *poblacion);
-void ejecutarMovimientos(char **poblacion, pushswap ps);
+void ejecutarMovimientos(char *poblacion, pushswap ps);
 int custom_rand(unsigned int *rand_seed);
 unsigned long long read_tsc(void);
 int lenstack(pushswap ps);
 int issorted(pushswap ps);
-int hastaCuantoAsOrdenado(pushswap ps, char **poblacion, int i);
-int hastaCuantoAsOrdenadoMejor(pushswap ps, char **poblacion);
+int hastaCuantoAsOrdenado(pushswap ps, char *poblacion);
+int hastaCuantoAsOrdenadoMejor(pushswap ps, char *poblacion);
 
 #endif

@@ -1,17 +1,6 @@
 #include "psgenetico.h"
 
-int hastaCuantoAsOrdenado(pushswap ps, char **poblacion, int i)
-{
-    ejecutarMovimientos(poblacion, ps);
-    i = -1;
-    while (ps.stacka[i] < ps.stacka[i+1])
-    {
-        i++;
-    }
-    return i;
-}
-
-int hastaCuantoAsOrdenadoMejor(pushswap ps, char **poblacion)
+int hastaCuantoAsOrdenado(pushswap ps, char *poblacion)
 {
     ejecutarMovimientos(poblacion, ps);
     int i = -1;
@@ -22,16 +11,23 @@ int hastaCuantoAsOrdenadoMejor(pushswap ps, char **poblacion)
     return i;
 }
 
-int issorted(pushswap ps)
+int hastaCuantoAsOrdenadoMejor(pushswap ps, char *poblacion)
 {
+    ejecutarMovimientos(poblacion, ps);
     int i = -1;
     while (ps.stacka[i] < ps.stacka[i+1])
     {
         i++;
-        if (ps.stacka[i] > ps.stacka[i+1])
-            return -1;
     }
     return i;
+}
+
+int issorted(pushswap ps) {
+    for (int i = 0; i < ps.size_a - 1; i++) {
+        if (ps.stacka[i] > ps.stacka[i + 1])
+            return -1;  // Stack is not sorted
+    }
+    return 0;  // Stack is sorted
 }
 
 int lenstack(pushswap ps)

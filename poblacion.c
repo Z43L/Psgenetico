@@ -23,7 +23,7 @@ char **generarPoblacionInicial(int semilla)
         while (j < movimientos)
         {
             if (intlen(semilla) <= 1)
-                strcpy(poblacion[i], "ra");   // Use strcpy to copy the string
+                strcpy(poblacion[i], "ra");
             else if (intlen(semilla) <= 3)
                 strcpy(poblacion[i], "rb");
             else if (intlen(semilla) <= 5 && intlen(semilla) >= 4)
@@ -42,25 +42,31 @@ char **generarPoblacionInicial(int semilla)
 }
 
 // Generate the population based on the best individual
-char **generarPoblacionDelMejor(int semilla, int posicionMejorInicial, int i)
+char **generarPoblacionDelMejor(int semilla, int posicionMejorInicial, int i,char *mejorpoblante)
 {
     char **nuevaPoblacion;
     
     // Allocate memory for nuevaPoblacion (array of strings)
     nuevaPoblacion = malloc(poblacionInicial * sizeof(char *));
     for (int k = 0; k < poblacionInicial; k++) {
-        nuevaPoblacion[k] = malloc(300 * sizeof(char *));  // Allocate memory for each move
+        nuevaPoblacion[k] = malloc(300 * sizeof(char *));
     }
 
+    int j = 0;
+    
     while (i < poblacionInicial)
     {    
         int movimientos = intlenmenos3(maxMovimientos);
         while (movimientos < 300)
             movimientos = intlenmenos3(maxMovimientos);
+        while(j < posicionMejorInicial)
+        {
+            ft_strlcpy(nuevaPoblacion[i], mejorpoblante,posicionMejorInicial);
+        }
         while (posicionMejorInicial < movimientos)
         {
             if (intlen(semilla) <= 1)
-                strcpy(nuevaPoblacion[i], "ra");   // Use strcpy to copy the string
+                strcpy(nuevaPoblacion[i], "ra"); 
             else if (intlen(semilla) <= 3)
                 strcpy(nuevaPoblacion[i], "rb");
             else if (intlen(semilla) <= 5 && intlen(semilla) >= 4)
