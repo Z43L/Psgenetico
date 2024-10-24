@@ -1,15 +1,25 @@
-void realizar_pb(int *stackb, int *size_b, int *stacka, int *size_a) {
-    if (*size_a > 0) {
-        for (int i = *size_b; i > 0; i--) {
-            stackb[i] = stackb[i - 1];
-        }
-        stackb[0] = stacka[0];
-        (*size_b)++;
+#include "psgenetico.h"
 
-        for (int i = 0; i < *size_a - 1; i++) {
-            stacka[i] = stacka[i + 1];
-        }
-        (*size_a)--;
+void realizar_pb(pushswap *ps)
+{
+    if (ps->size_a > 0) // Verificar que stacka tenga al menos un elemento
+    {
+        // Desplazar stackb hacia abajo
+        for (int i = ps->size_b; i > 0; i--)
+            ps->stackb[i] = ps->stackb[i - 1];
+
+        // Mover el primer elemento de stacka a stackb
+        ps->stackb[0] = ps->stacka[0];
+
+        // Desplazar stacka hacia arriba
+        for (int i = 0; i < ps->size_a - 1; i++)
+            ps->stacka[i] = ps->stacka[i + 1];
+
+        ps->size_a--;
+        ps->size_b++;
+    }
+    else
+    {
+        ft_printf("Error: No elements in stacka to perform pb\n");
     }
 }
-

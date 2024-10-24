@@ -16,7 +16,7 @@ int is_number(const char *str)
     }
     return (1);
 }
-void imprimirMejorPoblacion(char **mejorpoblacion)
+void imprimirMejorPoblacion(char *mejorpoblacion)
 {
     int i = 0;
     ft_printf("Mejor combinación de movimientos:\n");
@@ -25,6 +25,15 @@ void imprimirMejorPoblacion(char **mejorpoblacion)
         ft_printf("%s\n", mejorpoblacion[i]); 
         i++;
     }
+}
+void liberarPoblacion(char **poblacion)
+{
+    if (!poblacion) return;  // Verifica si la población ya fue liberada
+
+    for (int i = 0; i < poblacionInicial; i++) {
+        free(poblacion[i]);  // Libera cada cadena de movimientos
+    }
+    free(poblacion);  // Libera el arreglo de punteros
 }
 
 
@@ -83,26 +92,23 @@ int initstack(char **av)
     }
     return value;
 }
-
-
-
 int main(int ac, char **av)
 {
     if (ac < 2)
         return (0);
 
     int i = 1;
-    int  j =0;
+    int j = 0;
     int k = 0;
     pushswap ps;
-    unsigned int semilla = read_tsc();
-    char **poblacion; 
+    
+    char **poblacion;
     char *mejorpoblacion;
 
     ps.size_a = ac - 1;
     ps.size_b = 0;
 
-    
+    // Asignación de memoria para stacka y stackb
     ps.stacka = malloc(sizeof(int) * ps.size_a);
     ps.stackb = malloc(sizeof(int) * ps.size_a); 
     if (!ps.stacka || !ps.stackb)
@@ -111,49 +117,83 @@ int main(int ac, char **av)
         return (1);
     }
 
-    for (i = 1; i < ac; i++)
+    // Convertir los argumentos a enteros y cargarlos en stacka
+    i = 1;
+    while (i < ac)
     {
-        ps.stacka[i - 1] = atoi(av[i]); 
+        ps.stacka[i - 1] = atoi(av[i]);
+        i++; 
     }
-    // Print the stack to check if the input is loaded correctly
+
     ft_printf("Loaded stacka: ");
     for (int i = 0; i < ps.size_a; i++) {
         ft_printf("%d ", ps.stacka[i]); 
     }
     ft_printf("\n");
 
-
-    while (k < numeroDeGeneraciones)
+    // Bucle principal: ejecutar generaciones hasta que esté ordenado o se alcancen las generaciones máximas
+    while (k < numeroDeGeneraciones && issorted(ps) != 1)
     {
+        i = 0;
         while (i < poblacionInicial)
         {
-            while (issorted(ps) != -1)
-            {
-                int random = custom_rand(&semilla);
-                poblacion = generarPoblacionInicial(random);
-                while (poblacion[j])
-                {
-                    ejecutarMovimientos(poblacion[j], ps); 
-                    int numerodeMovimientosOrdenados = hastaCuantoAsOrdenado(ps, poblacion[j]);
-                    mejorpoblacion = poblacion[j];
-                    if(numerodeMovimientosOrdenados < hastaCuantoAsOrdenado(ps, poblacion[j -1]))
-                        mejorpoblacion =poblacion[j-1]; 
-                    j++;
-                }
-                poblacion[0] = mejorpoblacion;
-                int posicioInicial = hastaCuantoAsOrdenado(ps, poblacion[0]);
-                generarPoblacionDelMejor(semilla,posicioInicial, 0 ,mejorpoblacion);
+            poblacion = generarPoblacionInicial();
+            if (!poblacion) {
+                ft_putstr_fd("Error generating population\n", 2);
+                return (1);
             }
-            i++;
-            imprimirMejorPoblacion(poblacion);
 
+            j = 0;
+            mejorpoblacion = poblacion[0];  // Inicialmente, el primer individuo es el mejor
+
+            while (poblacion[j])
+            {
+                ejecutarMovimientos(poblacion[j], ps);
+                int numerodeMovimientosOrdenados = hastaCuantoAsOrdenado(ps, poblacion[j]);
+
+                if (issorted(ps) == 1) 
+                {
+                    ft_printf("Stacka está completamente ordenada. Movimientos usados:\n");
+                    imprimirMejorPoblacion(poblacion[j]);
+                    liberarPoblacion(poblacion);
+
+                    free(ps.stacka);
+                    free(ps.stackb);
+                    return 0;
+                }
+
+                // Comparar si el nuevo individuo está más ordenado
+                if (j > 0 && numerodeMovimientosOrdenados < hastaCuantoAsOrdenado(ps, mejorpoblacion))
+                {
+                    mejorpoblacion = poblacion[j];  // Actualizar la mejor población
+                }
+
+                j++;
+            }
+
+            // Liberar la memoria de la población actual
+            liberarPoblacion(poblacion);
+
+            // Generar una nueva población basada en el mejor individuo
+            int posicionInicial = hastaCuantoAsOrdenado(ps, mejorpoblacion);
+            poblacion = generarPoblacionDelMejor(posicionInicial, mejorpoblacion);  // Actualizar población
+
+            i++;
         }
+
+        imprimirMejorPoblacion(mejorpoblacion);  // Imprime la mejor población después de cada generación
+
+        if (issorted(ps) == 1) // Verifica si la pila está ordenada después de cada generación
+        {
+            ft_printf("Stacka está completamente ordenada. Fin del programa.\n");
+            free(ps.stacka);
+            free(ps.stackb);
+            return 0;
+        }
+
         k++;
     }
 
-    // Free allocated memory
-    free(ps.stacka);
-    free(ps.stackb);
-
+    
     return 0;
 }
