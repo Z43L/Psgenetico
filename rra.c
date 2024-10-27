@@ -1,15 +1,12 @@
 #include "psgenetico.h"
-void realizar_rra(int *stacka, int size_a)
-{
-    if (size_a > 1) // Solo rota si hay más de un elemento
-    {
+void realizar_rra(int *stacka, int size_a) {
+    if (size_a > 1) {
         int temp = stacka[size_a - 1];
-        for (int i = size_a - 1; i > 0; i--)
+        int i = size_a - 1;
+        while (i > 0) {
             stacka[i] = stacka[i - 1];
+            i--;
+        }
         stacka[0] = temp;
-    }
-    else
-    {
-        ft_printf("Error: Not enough elements to perform rra\n");
     }
 }

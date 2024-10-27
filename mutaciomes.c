@@ -18,12 +18,10 @@ int encontrarMenor(int arr[], int size)
 
     return menor;  // Retorna el número más pequeño
 }
+int hastaCuantoAsOrdenado(pushswap ps) {
+    if (ps.size_a == 0) return 0;
 
-int hastaCuantoAsOrdenado(pushswap ps, char *poblacion)
-{
-    ejecutarMovimientos(poblacion, ps);  // Ejecuta los movimientos en la población
-
-    // 1. Encuentra el índice del número más pequeño
+    // Encontrar el índice del valor mínimo en stacka
     int min_index = 0;
     for (int i = 1; i < ps.size_a; i++) {
         if (ps.stacka[i] < ps.stacka[min_index]) {
@@ -31,27 +29,23 @@ int hastaCuantoAsOrdenado(pushswap ps, char *poblacion)
         }
     }
 
-    // 2. Verifica que la pila está ordenada de menor a mayor a partir del número más pequeño
-    int i = min_index;
-    while (i < ps.size_a - 1 && ps.stacka[i] <= ps.stacka[i + 1]) {
-        i++;
-    }
+    // Verificar que el array está ordenado ascendentemente desde min_index
+    for (int i = 1; i < ps.size_a; i++) {
+        int current_index = (min_index + i) % ps.size_a;
+        int prev_index = (min_index + i - 1) % ps.size_a;
 
-    // 3. Si llegamos al final de la pila, verificamos desde el inicio hasta el índice del menor número
-    if (i == ps.size_a - 1) {
-        i = 0;
-        while (i < min_index && ps.stacka[i] <= ps.stacka[i + 1]) {
-            i++;
-        }
-
-        // Si el bucle terminó en el índice justo antes del menor número, está ordenada
-        if (i == min_index - 1) {
-            return ps.size_a;  // La pila está completamente ordenada
+        if (ps.stacka[prev_index] > ps.stacka[current_index]) {
+            return 0; // No está en orden ascendente
         }
     }
 
-    // Retorna el índice hasta donde está ordenado
-    return i;
+    // Si está ordenado, hacer rotaciones `ra` hasta que el mínimo esté en la posición 0
+    while (min_index > 0) {
+        realizar_ra(ps.stacka, ps.size_a); // Función para realizar la rotación
+        min_index--;
+    }
+
+    return 1; // Está ordenado con el mínimo en la posición inicial
 }
 
 
@@ -66,18 +60,20 @@ int hastaCuantoAsOrdenadoMejor(pushswap ps, char *poblacion)
     return i;
 }
 
-int issorted(pushswap ps) {
-    for (int i = 1; i < ps.size_a - 1; i++) {
-        if (ps.stacka[i] > ps.stacka[i -1])
-            return -1;  // Stack is not sorted
+int issorted(pushswap ps)
+{
+    for (int i = 0; i < ps.size_a - 1; i++) {
+        if (ps.stacka[i] > ps.stacka[i + 1])
+            return 0;  // No está ordenado
     }
-    return 1;  // Stack is sorted
+    return 1;  // Está ordenado
 }
 
-int lenstack(pushswap ps)
+
+int lenstack(int *stack, int ac)
 {
     int i = 0;
-    while (i < ps.size_a && ps.stacka[i] != 0)
+    while (i < ac&&stack[i] != 0)
         i++;
     return i;
 }

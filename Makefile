@@ -9,7 +9,7 @@ LIBFT_DIR = ./LIBFT
 PRINTF_DIR = ./FT_PRINTF
 
 
-SRCS = mutaciomes.c main.c pa.c pb.c ra.c rb.c  rra.c rrb.c   ejecutarMovimientos.c poblacion.c random.c utils.c
+SRCS = mutaciomes.c main.c pa.c pb.c ra.c rb.c  rra.c rrb.c   ejecutarMovimientos.c poblacion.c random.c utils.c mutaciones_dos.c
 OBJS = $(SRCS:.c=.o)
 
 LIBFT = $(LIBFT_DIR)/libft.a

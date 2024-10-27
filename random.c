@@ -1,38 +1,59 @@
 #include "psgenetico.h"
-
-#if defined(__x86_64__) || defined(__i386__)
-// Función para leer el TSC en arquitecturas x86/x86-64 usando ensamblador
-unsigned long long get_time_seed(void)
-{
+unsigned long long get_tsc_seed() {
     unsigned int lo, hi;
-    asm volatile ("rdtsc" : "=a" (lo), "=d" (hi));
+    // Ensamblador para leer el registro TSC (Timestamp Counter)
+    __asm__ volatile ("rdtsc" : "=a" (lo), "=d" (hi));
     return ((unsigned long long)hi << 32) | lo;
 }
 
-#elif defined(__arm__) || defined(__aarch64__)
-// Función para leer el contador de ciclos en arquitecturas ARM usando ensamblador
-unsigned long long get_time_seed(void)
-{
-    unsigned long long cc;
-    asm volatile ("mrs %0, cntvct_el0" : "=r" (cc));  // Leer el contador virtual en ARM
-    return cc;
-}
-
-#else
-#error "Arquitectura no soportada"
-#endif
-
-// Función custom_rand para generar números aleatorios con una semilla
 int custom_rand(unsigned long long rand_seed)
 {
-    // Mezclar la semilla con un valor constante para aumentar la entropía
-    rand_seed = rand_seed * 6364136223846793005ULL + 1;
+    rand_seed = rand_seed * 1103515245 + 12345;
+    return (rand_seed / 65536) % 32768;
+}
 
-    // Aplicar un método de mezcla adicional
-    rand_seed ^= (rand_seed >> 21);
-    rand_seed ^= (rand_seed << 35);
-    rand_seed ^= (rand_seed >> 4);
+unsigned long long read_tsc(void)
+{
+    unsigned int lo, hi;
 
-    // Devolver el número aleatorio con un rango amplio
-    return (rand_seed % 32768);
+    asm volatile ("rdtsc" : "=a" (lo), "=d" (hi));
+
+    return ((unsigned long long)hi << 32) | lo;
+}
+
+// Función para calcular la frecuencia del procesador
+double calcular_frecuencia_cpu()
+{
+    unsigned long long start, end;
+    double tiempo_espera = 1.0; // Esperar 1 segundo
+    volatile double tiempo_inicio = 0.0;
+
+    start = read_tsc();
+
+    while (tiempo_inicio < 1000000000.0)
+    {
+        tiempo_inicio += 1.0;
+    }
+
+    end = read_tsc();
+
+    return (end - start) / tiempo_espera;
+}
+
+double medir_tiempo(double duracion_segundos)
+{
+    unsigned long long start, end;
+    double frecuencia_cpu = calcular_frecuencia_cpu();
+    volatile double tiempo_transcurrido = 0.0;
+
+    start = read_tsc();
+
+    while (tiempo_transcurrido < frecuencia_cpu * duracion_segundos)
+    {
+        tiempo_transcurrido += 1.0;
+    }
+
+    end = read_tsc();
+
+    return (end - start) / frecuencia_cpu;
 }
